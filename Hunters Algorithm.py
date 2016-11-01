@@ -10,8 +10,24 @@ Home Work# : HW3(Hunts Algorithm Implementation)
 transactionData=[('n','n','c','l'),(1,1,125,0),(0,0,100,0),(0,1,70,0),(1,0,120,0),(0,2,95,1),
               (0,0,60,0),(1,2,220,0),(0,1,85,1),(0,0,75,0),(0,1,91,1)]
 length=len(transactionData[0])-1
-label=['No','Yes','NA']
 decisionTree=[]
+defzeroCount = 0
+defoneCount = 0
+defVal=0;
+label=['No','Yes','NA',defVal]
+
+for data in transactionData[1:]:
+     if (data[length] == 0):
+          defzeroCount += 1
+     elif (data[length] == 1):
+         defoneCount += 1
+
+if (defzeroCount > defoneCount):
+  defVal=0
+elif (defzeroCount < defoneCount):
+  defVal=1
+
+
 
 def calculateSeparatorValue(position):
     max=-1;min=100000000000
@@ -52,12 +68,11 @@ def calculateMaximun(checkData):
     elif (zeroCount<oneCount):
         return 1
     else:
-        return 0
+        return defVal
 
 
 
 def insertIntoTree(purity,position,seperatorvalue,leaf,side,nodeData=[]):
-    if(leaf=='No'):
       node=[leaf,label[purity],position,seperatorvalue,side]
       decisionTree.append(node)
 
@@ -78,8 +93,8 @@ def createNodes(nodeData,position):
             rightNodeData.append(data)
     leftNodePurity=checkPurity(leftNodeData)
     rightNodePurity=checkPurity(rightNodeData)
-    if(leftNodePurity==0|leftNodePurity==1):
-        insertIntoTree(leftNodePurity,position,seperatotValue,"yes","left")
+    if(leftNodePurity==0 or leftNodePurity==1):
+        insertIntoTree(leftNodePurity,position,seperatotValue,"Yes","left")
     elif(leftNodePurity!=-1):
         if(end==1):
             #print("No attribute to traverse")
@@ -88,9 +103,10 @@ def createNodes(nodeData,position):
         else:
             insertIntoTree(leftNodePurity, position, seperatotValue, "No", "left",leftNodeData)
             createNodes(leftNodeData,position+1)
+    else:
+        insertIntoTree(3, position, seperatotValue, "Yes", "left")
 
-
-    if (rightNodePurity == 0 | rightNodePurity == 1):
+    if (rightNodePurity == 0 or rightNodePurity == 1):
         insertIntoTree(rightNodePurity, position, seperatotValue, "Yes", "right")
     elif (rightNodePurity != -1):
         if (end == 1):
@@ -100,7 +116,11 @@ def createNodes(nodeData,position):
         else:
             insertIntoTree(rightNodePurity, position, seperatotValue, "No", "right",rightNodeData)
             createNodes(rightNodeData, position + 1)
+    else:
+        insertIntoTree(3,position,seperatotValue,"Yes","right")
 
 createNodes(transactionData[1:],0)
 
-print(decisionTree)
+print("[isLeaf,lableValue,attributePos,seperatorvalue,nodeSide]");
+for node in decisionTree:
+  print(node)
